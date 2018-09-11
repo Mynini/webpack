@@ -1,0 +1,42 @@
+var path = require("path");
+// 1、引入ExtractTextWebpackPlugin
+var ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
+module.exports = {
+    entry: {
+        index: "./1.js"
+    },
+    output: {
+        path: path.resolve(__dirname, "dist"),
+        publicPath: "dist/",
+        filename: '[name].bundle.js',
+        chunkFilename: "[name].bundle.js"// 指定打包文件的块名称
+    },
+    module: {
+        rules: [
+            {
+                test: /\.css$/,
+                use: ExtractTextWebpackPlugin.extract({ // 2、使用ExtractTextWebpackPlugin
+                    fallback: {// 不提取的时候，使用什么样的配置来处理css
+                        loader: 'style-loader',
+                        options: {
+                            singleton: true
+                        }
+                    },
+                    use: [ // 提取的时候，继续用下面的方式处理
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                minimize: true
+                            }
+                        }
+                    ]
+                })
+            }
+        ]
+    },
+    plugins: [
+        new ExtractTextWebpackPlugin({ //3、 在plugins中配置属性
+            filename: '[name].min.css' // 配置提取出来的css名称
+        })
+    ]
+}
